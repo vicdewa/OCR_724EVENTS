@@ -11,27 +11,36 @@ const PER_PAGE = 9;
 
 const EventList = () => {
   const { data, error } = useData();
-  const [type, setType] = useState();
+  const [type, setType] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const filteredEvents = (
-    (!type
-      ? data?.events
-      : data?.events) || []
-  ).filter((event, index) => {
-    if (
-      (currentPage - 1) * PER_PAGE <= index &&
-      PER_PAGE * currentPage > index
-    ) {
-      return true;
-    }
-    return false;
-  });
+
+  //La fonction pose problème car elle montre les mêmes résultats, que le type soit défini ou pas. Ici on compare le filtre sélectionné avec le type des événements et ne montre que ceux qui ont le même type que le filtre. Si on n'a aucun filtre sélectionné, on affiche tous les événements.
+
+
+  //Filtrage des événements en fonction de la catégorie (=type) sélectionnée 
+  const filteredEvents = type
+    ? data?.events.filter((event) => event.type === type)
+    : data?.events || [];
+
+  // Calcul du nombre total de pages APRÈS filtrage
+  const pageNumber = Math.floor(filteredEvents.length / PER_PAGE) + (filteredEvents.length % PER_PAGE > 0 ? 1 : 0);
+
+  //Affichage des événements de la page actuelle
+  const eventsForCurrentPage = filteredEvents.slice(
+    (currentPage - 1) * PER_PAGE, //Début de la "tranche"
+    currentPage * PER_PAGE // Fin de la "tranche"
+  );
+
+  // Retour à la première page lorsque la catégorie (=type) change
   const changeType = (evtType) => {
     setCurrentPage(1);
     setType(evtType);
+    console.log(evtType);
   };
-  const pageNumber = Math.floor((filteredEvents?.length || 0) / PER_PAGE) + 1;
+
+  // Liste des types d'événements du menu déroulant
   const typeList = new Set(data?.events.map((event) => event.type));
+
   return (
     <>
       {error && <div>An error occured</div>}
@@ -45,7 +54,7 @@ const EventList = () => {
             onChange={(value) => (value ? changeType(value) : changeType(null))}
           />
           <div id="events" className="ListContainer">
-            {filteredEvents.map((event) => (
+            {eventsForCurrentPage.map((event) => (
               <Modal key={event.id} Content={<ModalEvent event={event} />}>
                 {({ setIsOpened }) => (
                   <EventCard
