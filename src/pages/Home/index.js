@@ -93,6 +93,7 @@ const Page = () => {
       </section>
       <div className="FormContainer" id="contact">
         <h2 className="Title">Contact</h2>
+
         <Modal
           Content={
             <div className="ModalMessage--success">
@@ -106,7 +107,7 @@ const Page = () => {
         >
           {({ setIsOpened }) => (
             <Form
-              onSuccess={() => setIsOpened(true)}
+              onSuccess={() => setIsOpened(false)}
               onError={() => null}
             />
           )}
@@ -115,14 +116,20 @@ const Page = () => {
     </main>
     <footer className="row">
       <div className="col presta">
-        <h3>Notre derniére prestation</h3>
+        <h3>Notre dernière prestation</h3>
+        {
+          last ? (
         <EventCard
           imageSrc={last?.cover}
           title={last?.title}
           date={new Date(last?.date)}
           small
-          label="boom"
+          label={last?.type}
         />
+        ):(
+          <div>Merci de patienter...</div>
+        )
+        }  
       </div>
       <div className="col contact">
         <h3>Contactez-nous</h3>

@@ -8,14 +8,23 @@ const mockContactApi = () => new Promise((resolve) => { setTimeout(resolve, 500)
 
 const Form = ({ onSuccess, onError }) => {
   const [sending, setSending] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+// Ajout d'un état pour que le formulaire soit remplacé par un message de confirmation une fois le message correctement envoyé //
+  const [formSubmitted, setFormSubmitted] = useState(false);
+
   const sendContact = useCallback(
     async (evt) => {
       evt.preventDefault();
       setSending(true);
+      // Reset success message before trying to send the form
+      setSuccessMessage(""); 
       // We try to call mockContactApi
       try {
         await mockContactApi();
         setSending(false);
+        setSuccessMessage("Votre message a été envoyé avec succès!");
+        setFormSubmitted(true);
+        onSuccess();
       } catch (err) {
         setSending(false);
         onError(err);
@@ -24,15 +33,17 @@ const Form = ({ onSuccess, onError }) => {
     [onSuccess, onError]
   );
   return (
+    <div>
+    {!formSubmitted ? (
     <form onSubmit={sendContact}>
       <div className="row">
         <div className="col">
           <Field placeholder="" label="Nom" />
           <Field placeholder="" label="Prénom" />
           <Select
-            selection={["Personel", "Entreprise"]}
+            selection={["Personnel", "Entreprise"]}
             onChange={() => null}
-            label="Personel / Entreprise"
+            label="Personnel / Entreprise"
             type="large"
             titleEmpty
           />
@@ -49,9 +60,15 @@ const Form = ({ onSuccess, onError }) => {
           />
         </div>
       </div>
-    </form>
+      </form>
+    ):(
+      <div className="succes-message">
+      {successMessage}
+    </div>
+  )}
+  </div>
   );
-};
+    };
 
 Form.propTypes = {
   onError: PropTypes.func,
