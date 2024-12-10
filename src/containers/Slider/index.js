@@ -5,12 +5,12 @@ import { getMonth } from "../../helpers/Date";
 import "./style.scss";
 
 const Slider = () => {
-  const { data } = useData(); //probleme de key?//
+  const { data } = useData(); 
   console.log(data)
   const [index, setIndex] = useState(0);
-// MODIF > Si A est plus récent que B, alors A est placé après B. Si A est plus ancien que B alors A est placé avant B. //  
+// MODIF > Si A est plus ancien que B, alors A est placé avant B. Si A est plus récent que B alors A est placé après B. //  
   const byDateDesc = data?.focus.sort((evtA, evtB) =>
-    new Date(evtA.date) > new Date(evtB.date) ? 1 : -1
+    new Date(evtA.date) < new Date(evtB.date) ? -1 : 1
   );
   console.log(byDateDesc);
   const nextCard = () => {
