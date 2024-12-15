@@ -24,7 +24,7 @@ const Form = ({ onSuccess, onError }) => {
         console.log('API OK');
         setSending(false);
         setSuccessMessage("Message envoyé !");
-        console.log('Envoi en cours')
+        console.log('Message envoyé')
         setFormSubmitted(true);
         onSuccess();
       } catch (err) {
